@@ -42,12 +42,13 @@ public class JaMuzController : ControllerBase
     }
 
     [HttpGet("play/{id}")]
-    public IActionResult PlayFile([FromRoute] int id)
+    public IActionResult PlayFile([FromRoute] long id)
     {
         using var db = new Database.JaMuzContext();
         File file = db.File.Find(id);
         Path path = db.Path.Find(file.IdPath);
-        var filename = System.IO.Path.Combine(path.StrPath, file.Name); ;
+        var rootPath = "/home/raph/Musique/Archive";
+        var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name); ;
         if (outputDevice == null)
         {
             outputDevice = new WaveOutEvent();
