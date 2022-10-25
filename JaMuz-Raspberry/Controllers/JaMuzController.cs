@@ -44,20 +44,10 @@ public class JaMuzController : ControllerBase
     [HttpGet("play/{id}")]
     public IActionResult PlayFile([FromRoute] int id)
     {
-        PlayFile();
-        return Ok();
-    }
-
-    [HttpGet("/stop")]
-    public IActionResult StopFile()
-    {
-        outputDevice?.Stop();
-        return Ok();
-    }
-
-    private void PlayFile()
-    {
-        var filename = @"C:\Users\xxxx.mp3";
+        using var db = new Database.JaMuzContext();
+        File file = db.File.Find(id);
+        Path path = db.Path.Find(file.IdPath);
+        var filename = System.IO.Path.Combine(path.StrPath, file.Name); ;
         if (outputDevice == null)
         {
             outputDevice = new WaveOutEvent();
@@ -69,6 +59,14 @@ public class JaMuzController : ControllerBase
             outputDevice.Init(audioFile);
         }
         outputDevice.Play();
+        return Ok();
+    }
+
+    [HttpGet("/stop")]
+    public IActionResult StopFile()
+    {
+        outputDevice?.Stop();
+        return Ok();
     }
 
     private void OnPlaybackStopped(object sender, StoppedEventArgs args)
