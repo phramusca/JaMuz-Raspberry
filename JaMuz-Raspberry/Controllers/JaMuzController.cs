@@ -1,9 +1,10 @@
 ﻿using JaMuzRaspberry.Database.Models;
+using LibVLCSharp.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,12 +15,13 @@ namespace JaMuzRaspberry.Controllers;
 public class JaMuzController : ControllerBase
 {
     private readonly ILogger<JaMuzController> _logger;
-    private static WaveOutEvent outputDevice;
-    private static AudioFileReader audioFile;
+    private static LibVLC _libVLC;
+    private static MediaPlayer _mediaPlayer;
 
     public JaMuzController(ILogger<JaMuzController> logger)
     {
         _logger = logger;
+        _libVLC = new LibVLC(enableDebugLogs: true);
     }
 
     [HttpGet("marley")]
@@ -44,37 +46,40 @@ public class JaMuzController : ControllerBase
     [HttpGet("play/{id}")]
     public IActionResult PlayFile([FromRoute] long id)
     {
-        using var db = new Database.JaMuzContext();
-        File file = db.File.Find(id);
-        Path path = db.Path.Find(file.IdPath);
-        var rootPath = "/home/raph/Musique/Archive";
-        var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name); ;
-        if (outputDevice == null)
+        if(_mediaPlayer != null && _mediaPlayer.IsPlaying)
         {
-            outputDevice = new WaveOutEvent();
-            outputDevice.PlaybackStopped += OnPlaybackStopped;
+            return BadRequest("Already playing");
         }
-        if (audioFile == null)
-        {
-            audioFile = new AudioFileReader(filename);
-            outputDevice.Init(audioFile);
-        }
-        outputDevice.Play();
+        //using var db = new Database.JaMuzContext();
+        //File file = db.File.Find(id);
+        //Path path = db.Path.Find(file.IdPath);
+        //var rootPath = "/home/raph/Musique/Archive";
+        //var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name); ;
+        var filename = @"C:\Users\xxxxxx.mp3";
+        var media = new Media(_libVLC, new Uri(filename), ":no-video");
+        _mediaPlayer = new MediaPlayer(media);
+
+        //mediaPlayer.SetAudioFormatCallback(AudioSetup, AudioCleanup);
+        //mediaPlayer.SetAudioCallbacks(PlayAudio, PauseAudio, ResumeAudio, FlushAudio, DrainAudio);
+
+        _mediaPlayer.Play();
+        //mediaPlayer.Time = 20_000; // Seek the video 20 seconds
+
         return Ok();
     }
 
     [HttpGet("/stop")]
     public IActionResult StopFile()
     {
-        outputDevice?.Stop();
+        _mediaPlayer?.Stop();
         return Ok();
     }
 
-    private void OnPlaybackStopped(object sender, StoppedEventArgs args)
-    {
-        outputDevice.Dispose();
-        outputDevice = null;
-        audioFile.Dispose();
-        audioFile = null;
-    }
+    //private void OnPlaybackStopped(object sender, StoppedEventArgs args)
+    //{
+    //    outputDevice.Dispose();
+    //    outputDevice = null;
+    //    audioFile.Dispose();
+    //    audioFile = null;
+    //}
 }
