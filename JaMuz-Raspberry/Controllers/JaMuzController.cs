@@ -53,7 +53,8 @@ public class JaMuzController : ControllerBase
         using var db = new Database.JaMuzContext();
         File file = db.File.Find(id);
         Path path = db.Path.Find(file.IdPath);
-        var rootPath = "/home/raph/Musique/Archive";
+        //var rootPath = "/home/raph/Musique/Archive";
+        var rootPath = "/media/pi/MAXTOR/Musique-BAK/Archive";
         var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name);
         var media = new Media(_libVLC, new Uri(filename), ":no-video");
         _mediaPlayer = new MediaPlayer(media);
