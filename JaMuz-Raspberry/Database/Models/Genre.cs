@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace JaMuzRaspberry.Database.Models;
 
-namespace DotMuz.Database.Models
+public partial class Genre
 {
-    public partial class Genre
-    {
-        public long Id { get; set; }
-        public string Value { get; set; }
-    }
+    public long Id { get; set; }
+    public string Value { get; set; }
 }

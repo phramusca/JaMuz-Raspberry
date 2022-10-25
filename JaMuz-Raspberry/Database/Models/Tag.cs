@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace DotMuz.Database.Models
+namespace JaMuzRaspberry.Database.Models;
+
+public partial class Tag
 {
-    public partial class Tag
+    public Tag()
     {
-        public Tag()
-        {
-            Tagfile = new HashSet<Tagfile>();
-        }
-
-        public long Id { get; set; }
-        public string Value { get; set; }
-
-        public virtual ICollection<Tagfile> Tagfile { get; set; }
+        Tagfile = new HashSet<Tagfile>();
     }
+
+    public long Id { get; set; }
+    public string Value { get; set; }
+
+    public virtual ICollection<Tagfile> Tagfile { get; set; }
 }
