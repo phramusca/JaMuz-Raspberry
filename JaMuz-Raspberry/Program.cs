@@ -15,7 +15,7 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
-                .UseUrls("https://192.168.1.145:8080")
+                .UseUrls("https://*:8080")
                 .UseStartup<Startup>();
             });
 }
