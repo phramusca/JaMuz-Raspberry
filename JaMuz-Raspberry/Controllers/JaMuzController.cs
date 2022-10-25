@@ -50,12 +50,11 @@ public class JaMuzController : ControllerBase
         {
             return BadRequest("Already playing");
         }
-        //using var db = new Database.JaMuzContext();
-        //File file = db.File.Find(id);
-        //Path path = db.Path.Find(file.IdPath);
-        //var rootPath = "/home/raph/Musique/Archive";
-        //var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name); ;
-        var filename = @"C:\Users\xxxxxx.mp3";
+        using var db = new Database.JaMuzContext();
+        File file = db.File.Find(id);
+        Path path = db.Path.Find(file.IdPath);
+        var rootPath = "/home/raph/Musique/Archive";
+        var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name);
         var media = new Media(_libVLC, new Uri(filename), ":no-video");
         _mediaPlayer = new MediaPlayer(media);
 
