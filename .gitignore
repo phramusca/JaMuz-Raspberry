@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 
 JaMuz-Raspberry/JaMuz.db
+
+JaMuz-Raspberry/appsettings.Development.json

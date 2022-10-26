@@ -7,21 +7,30 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Options;
 
 namespace JaMuzRaspberry.Controllers;
+
+public class ControllerSettings
+{
+    public const string Section = "JaMuz";
+    public string RootPath { get; set; }
+}
 
 [ApiController]
 [Route("api")]
 public class JaMuzController : ControllerBase
 {
     private readonly ILogger<JaMuzController> _logger;
+    private readonly ControllerSettings _options;
     private static LibVLC _libVLC;
     private static MediaPlayer _mediaPlayer;
 
-    public JaMuzController(ILogger<JaMuzController> logger)
+    public JaMuzController(ILogger<JaMuzController> logger, IOptions<ControllerSettings> options)
     {
         _logger = logger;
         _libVLC = new LibVLC(enableDebugLogs: true);
+        _options = options.Value;
     }
 
     [HttpGet("marley")]
@@ -53,22 +62,22 @@ public class JaMuzController : ControllerBase
         using var db = new Database.JaMuzContext();
         File file = db.File.Find(id);
         Path path = db.Path.Find(file.IdPath);
-        //var rootPath = "/home/raph/Musique/Archive";
-        var rootPath = "/media/pi/MAXTOR/Musique-BAK/Archive";
-        var filename = System.IO.Path.Combine(rootPath, path.StrPath, file.Name);
-        var media = new Media(_libVLC, new Uri(filename), ":no-video");
-        _mediaPlayer = new MediaPlayer(media);
+        var filename = System.IO.Path.Combine(_options.RootPath, path.StrPath, file.Name);
+        if (System.IO.File.Exists(filename)) {
+            var media = new Media(_libVLC, new Uri(filename), ":no-video");
+            _mediaPlayer = new MediaPlayer(media);
 
-        //mediaPlayer.SetAudioFormatCallback(AudioSetup, AudioCleanup);
-        //mediaPlayer.SetAudioCallbacks(PlayAudio, PauseAudio, ResumeAudio, FlushAudio, DrainAudio);
+            //mediaPlayer.SetAudioFormatCallback(AudioSetup, AudioCleanup);
+            //mediaPlayer.SetAudioCallbacks(PlayAudio, PauseAudio, ResumeAudio, FlushAudio, DrainAudio);
 
-        _mediaPlayer.Play();
-        //mediaPlayer.Time = 20_000; // Seek the video 20 seconds
-
-        return Ok();
+            _mediaPlayer.Play();
+            //mediaPlayer.Time = 20_000; // Seek the video 20 seconds
+            return Ok();
+        }
+        return NotFound();
     }
 
-    [HttpGet("/stop")]
+    [HttpGet("stop")]
     public IActionResult StopFile()
     {
         _mediaPlayer?.Stop();
