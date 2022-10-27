@@ -15,7 +15,8 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
-                .UseUrls("https://*:8080")
+                //FIXME: Move back to https
+                .UseUrls("http://*:8080")
                 .UseStartup<Startup>();
             });
 }

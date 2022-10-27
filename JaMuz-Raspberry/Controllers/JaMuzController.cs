@@ -61,7 +61,13 @@ public class JaMuzController : ControllerBase
         }
         using var db = new Database.JaMuzContext();
         File file = db.File.Find(id);
+        if(file == null) {
+            return NotFound();
+        }
         Path path = db.Path.Find(file.IdPath);
+        if(path == null) {
+            return NotFound();
+        }
         var filename = System.IO.Path.Combine(_options.RootPath, path.StrPath, file.Name);
         if (System.IO.File.Exists(filename)) {
             var media = new Media(_libVLC, new Uri(filename), ":no-video");
