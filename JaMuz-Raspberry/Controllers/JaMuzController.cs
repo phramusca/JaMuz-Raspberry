@@ -52,7 +52,7 @@ public class JaMuzController : ControllerBase
         }
     }
 
-    [HttpGet("play/{id}")]
+    [HttpPost("play/{id}")]
     public IActionResult PlayFile([FromRoute] long id)
     {
         if(_mediaPlayer != null && _mediaPlayer.IsPlaying)
@@ -83,7 +83,7 @@ public class JaMuzController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("stop")]
+    [HttpPost("stop")]
     public IActionResult StopFile()
     {
         _mediaPlayer?.Stop();

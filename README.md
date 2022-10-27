@@ -4,14 +4,38 @@
 
 A Web Api to play audio files from JaMuz database on a Raspberry, from Jamuz-Remote.
 
-## Installation
+## Prerequisites
 
-Only general guidelines for now ...
+### Raspberry
 
 - [Install Raspberry Pi OS](https://www.raspberrypi.com/software/) (by Raspberry)
-- [Deploy .NET apps to Raspberry Pi](https://learn.microsoft.com/en-us/dotnet/iot/deployment) (by Microsoft)
+- Install LibVLC using "[Getting started on LibVLCSharp for Linux](https://code.videolan.org/videolan/LibVLCSharp/-/blob/3.x/docs/linux-setup.md)" guide by VLC team.
+- Deploy the application
+  - Enable SSH and install dotnet on your Raspberry using "[Deploy .NET apps to Raspberry Pi](https://learn.microsoft.com/en-us/dotnet/iot/deployment)" guid by Microsoft.
+  - Here is my script to deploy and connect to Raspberry. You can adapt it to suit your case:
+
+```bash
+sshfs pi@192.168.1.145:/ /media/raph/recalbox/
+rsync -a --progress --exclude={'**/bin**','**/obj'} ~/Documents/04-Creations/Dev/Repos/JaMuz-Raspberry /media/raph/recalbox/home/pi/Documents
+ssh pi@192.168.1.145
+```
+
+### Linux
+
 - [Install dotnet on Ubuntu](https://learn.microsoft.com/fr-fr/dotnet/core/install/linux-ubuntu) (by Microsoft)
 - [Getting started on LibVLCSharp for Linux](https://code.videolan.org/videolan/LibVLCSharp/-/blob/3.x/docs/linux-setup.md) (by VLC)
+
+### Windows
+
+- [Install dotnet](https://dotnet.microsoft.com/en-us/download) (by Microsoft)
+
+## Run
+
+```bash
+cd Documents/JaMuz-Raspberry/
+cd ~/Documents/JaMuz-Raspberry/JaMuz-Raspberry/
+dotnet run
+```
 
 ## Resources
 
