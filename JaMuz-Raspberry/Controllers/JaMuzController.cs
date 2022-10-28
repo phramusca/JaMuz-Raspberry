@@ -83,6 +83,17 @@ public class JaMuzController : ControllerBase
         return NotFound();
     }
 
+    [HttpPost("pause")]
+    public IActionResult PauseFile()
+    {
+        if(_mediaPlayer == null || !_mediaPlayer.IsPlaying)
+        {
+            return BadRequest("Not playing");
+        }
+        _mediaPlayer?.Pause();
+        return Ok();
+    }
+
     [HttpPost("stop")]
     public IActionResult StopFile()
     {
